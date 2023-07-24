@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PDF Processing</title>
+</head>
+<body>
+    <h1>PDF Processing</h1>
+    <form id="pdfForm" action="/process_pdf" method="post" enctype="multipart/form-data">
+        <input type="file" name="pdf_file">
+        <input type="text" name="pdf_password" placeholder="PDF password (if any)">
+        <button type="submit">Extract Data from PDF</button>
+    </form>
+    <br>
+    <form id="pdfFormTables" action="/process_tables" method="post" enctype="multipart/form-data">
+        <input type="file" name="pdf_file">
+        <input type="text" name="pdf_password" placeholder="PDF password (if any)">
+        <button type="submit">Extract Tables from PDF</button>
+    </form>
+    <br>
+    <form id="pdfFormEquities" action="/save_equities_data" method="post" enctype="multipart/form-data">
+        <input type="file" name="pdf_file">
+        <input type="text" name="pdf_password" placeholder="PDF password (if any)">
+        <button type="submit">Save Equities Data to MySQL</button>
+    </form>
+    <br>
+    <form id="pdfFormMutualFund" action="/save_mutual_fund_folios" method="post" enctype="multipart/form-data">
+        <input type="file" name="pdf_file">
+        <input type="text" name="pdf_password" placeholder="PDF password (if any)">
+        <button type="submit">Save Mutual Fund Folios Data to MySQL</button>
+    </form>
+    <br>
+    <form id="pdfFormUserDetails" action="/save_user_details" method="post" enctype="multipart/form-data">
+        <input type="file" name="pdf_file">
+        <input type="text" name="pdf_password" placeholder="PDF password (if any)">
+        <button type="submit">Save User Details to MySQL</button>
+    </form>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            function handleFormSubmit(e, formId, fileType) {
+                e.preventDefault();
+                var formData = new FormData($("#" + formId)[0]);
+                $.ajax({
+                    url: $("#" + formId).attr('action'),
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        alert(response.message);
+
+                        // Initiate download
+                        var downloadLink = document.createElement('a');
+                        downloadLink.href = '/download_file?file_path=' + response[fileType];
+                        downloadLink.download = fileType.toUpperCase();
+                        downloadLink.click();
+                    }
+                });
+            }
+
+            $("#pdfForm").submit(function(e) {
+                handleFormSubmit(e, 'pdfForm', 'json_file_path');
+            });
+
+            $("#pdfFormTables").submit(function(e) {
+                handleFormSubmit(e, 'pdfFormTables', 'json_file_path');
+            });
+
+            $("#pdfFormEquities").submit(function(e) {
+                handleFormSubmit(e, 'pdfFormEquities', 'json_file_path');
+            });
+
+            $("#pdfFormMutualFund").submit(function(e) {
+                handleFormSubmit(e, 'pdfFormMutualFund', 'json_file_path');
+            });
+
+            $("#pdfFormUserDetails").submit(function(e) {
+                handleFormSubmit(e, 'pdfFormUserDetails', 'json_file_path');
+            });
+        });
+    </script>
+</body>
+</html>
